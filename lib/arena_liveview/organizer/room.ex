@@ -22,6 +22,7 @@ defmodule ArenaLiveview.Organizer.Room do
     |> cast(attrs, @fields)
     |> validate_required([:title, :slug])
     |> format_slug()
+    |> format_video_url()
     |> unique_constraint(:slug)
   end
 
@@ -34,4 +35,14 @@ defmodule ArenaLiveview.Organizer.Room do
     end)
   end
   defp format_slug(changeset), do: changeset
+
+  defp format_video_url(%Ecto.Changeset{changes: %{video_id: _}} = changeset) do
+    changeset
+    |> update_change(:video_id, fn video_url ->
+      ~r{^.*(?:youtu\.be/|\w+/|v=)(?<id>[^#&?]*)}
+      |> Regex.named_captures(video_url)
+      |> get_in(["id"])
+    end)
+  end
+  defp format_video_url(changeset), do: changeset
 end
