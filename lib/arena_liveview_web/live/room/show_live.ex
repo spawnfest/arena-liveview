@@ -19,6 +19,9 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
       <li><%= uuid %></li>
     <% end %>
     </ul>
+    <div id="<%= @player_container.id %>"></div>
+    <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id] do %>
+    <% end %>
     """
   end
 
@@ -43,6 +46,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
           |> assign(:user, user)
           |> assign(:slug, slug)
           |> assign(:connected_users, [])
+          |> assign(:player_container, %{id: "player-container"}) # This field could be a generated field using the room id, or a hardcoded id
         }
     end
   end

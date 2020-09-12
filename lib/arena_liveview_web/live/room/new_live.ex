@@ -14,6 +14,7 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
         <%= error_tag f, :title %>
         <%= text_input f, :slug, placeholder: "room-slug" %>
         <%= error_tag f, :slug %>
+        <%= text_input f, :video_id, placeholder: "video id" %>
         <%= submit "Save" %>
       <% end %>
     </div>
