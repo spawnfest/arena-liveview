@@ -11,14 +11,14 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def render(assigns) do
-    IO.inspect(assigns, label: "assignsssss")
     ~L"""
     <div class="overlay">
-      <h2 id="1" phx-hook="BroadcastMovement"> Room: <span><b><%= @room.title %></b><span></h2>
-      <h3>Live Users: <%= Enum.count(@connected_users) %></h3>
+      <h2 id="1" phx-hook="BroadcastMovement"> |> Room: <span><b><%= @room.title %></b><span></h2>
+      <h3> |> Live Users: <%= Enum.count(@connected_users) %></h3>
+      |> <br><rr>
       <ul>
         <%= for uuid <- @connected_users do %>
-          <li><img src="<%= ArenaLiveviewWeb.Endpoint.static_url() %>/images/test.png" alt="<%= uuid %> avatar" /></li>
+          <li><img src="<%= ArenaLiveviewWeb.Endpoint.static_url() %>/images/avatars/<%= uuid %>.png" alt="<%= uuid %> avatar" /></li>
         <% end %>
       </ul>
       <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id] do %>
@@ -30,7 +30,8 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
     user = ConnectedUser.create_connected_user()
-
+    :ok = ConnectedUser.create_user_avatar(user.uuid)
+    IO.inspect("MOUNT")
     Phoenix.PubSub.subscribe(ArenaLiveview.PubSub, "room:" <> slug)
     {:ok, _} = Presence.track(self(), "room:" <> slug, user.uuid, %{})
 
@@ -64,10 +65,10 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   end
 
   @impl true
-  def handle_event("publish-move", params, socket) do
+  def handle_event("publish-move", _params, socket) do
     #
-    IO.puts "getting stuff"
-    IO.inspect params
+    #IO.puts "getting stuff"
+    #IO.inspect params
     {:noreply, socket}
   end
 end
