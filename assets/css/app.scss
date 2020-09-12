@@ -124,8 +124,19 @@ header {
 }
 
 .overlay ul {
-  padding: 10px;
+  padding: 0px; }
+
+.overlay ul li {
+  display: inline-block;
+  
 }
+
+.overlay li img {
+  width: 30px;
+  height: 30px;
+  margin: 2px; 
+}
+
 
 /*overlay in small devices*/
 @media (min-width: 40.0rem) { 
