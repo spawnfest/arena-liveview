@@ -54,7 +54,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def handle_info(%Broadcast{event: "presence_diff"}, socket) do
-    presence = list_present(socket)
+    presence = Organizer.list_present(socket.assigns.slug)
 
     {:noreply,
       socket
@@ -69,11 +69,5 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
     IO.puts "getting stuff"
     IO.inspect params
     {:noreply, socket}
-  end
-
-  defp list_present(socket) do
-    Presence.list("room:" <> socket.assigns.slug)
-    # Check extra metadata needed from Presence
-    |> Enum.map(fn {k, _} -> k end)
   end
 end
