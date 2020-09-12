@@ -9,11 +9,12 @@ defmodule ArenaLiveview.Organizer.Room do
   schema "rooms" do
     field :title, :string
     field :slug, :string
+    field :private, :boolean, default: true
 
     timestamps()
   end
 
-  @fields [:title, :slug]
+  @fields [:title, :slug, :private]
 
   def changeset(room, attrs) do
     room

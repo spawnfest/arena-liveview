@@ -5,6 +5,9 @@
     <%= error_tag f, :title %>
     <%= text_input f, :slug, placeholder: "room-slug" %>
     <%= error_tag f, :slug %>
+    <p>
+        Private Room <%= checkbox f, :private %>
+    </p>
     <%= submit "Save" %>
     <% end %>
 </div>
@@ -12,8 +15,11 @@
     <h3> Room list: </h3>
     <ul>
     <%= for room <- @rooms do %>
-        <%= link room.title, to: Routes.show_path(@socket, :show, room.slug) %>
-        <li>  </li>
+        <li>
+            <%= if not room.private do %>
+                <%= link room.title, to: Routes.show_path(@socket, :show, room.slug) %>
+            <% end %>
+        </li>
     <% end %>
     </ul>
 </div>
