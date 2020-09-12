@@ -1,13 +1,14 @@
-const BroadcastMovement = {
+const BroadcastMovementHook = (scene) => ({
   mounted() {
-    const self = this;
     scene.camera.cameraObject.element.addEventListener(
       "move",
-      function (event) {
-        self.pushEvent("move", event.detail);
+      (event) => {
+        this.pushEvent("move", event.detail);
       },
       false
     );
+
+    // Handlers for presence and move
     this.handleEvent("presence-changed", (thing) =>
       console.log(JSON.stringify(thing, null, 2))
     );
@@ -18,6 +19,6 @@ const BroadcastMovement = {
   update() {
     console.log("this was updated");
   },
-};
+});
 
-export default BroadcastMovement;
+export default BroadcastMovementHook;

@@ -7,7 +7,7 @@ import { LiveSocket } from "phoenix_live_view";
 import { Scene } from "3d-css-scene";
 
 import Video from "./video"
-import BroadcastMovement from "./hooks/movement"
+import BroadcastMovementHook from "./hooks/movement"
 
 const scene = new Scene();
 const room = scene.createRoom("room", 3600, 1080, 3000);
@@ -27,7 +27,7 @@ const csrfToken = document
 // >> liveSocket.enableLatencySim(1000)
 
 let Hooks = {
-  BroadcastMovement
+  BroadcastMovement: BroadcastMovementHook(scene)
 };
 
 Hooks.VideoPlaying = {
