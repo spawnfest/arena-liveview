@@ -48,10 +48,7 @@ Hooks.BroadcastMovement = {
 Hooks.VideoPlaying = {
   mounted() {
     const { videoId } = this.el.dataset
-
-    // Using the previously initialised player container
-    Video.init(playerContainer, videoId, (player) => {
-      console.log('...finished initialising ::: ', player)
+    videoId && Video.init(playerContainer, videoId, (player) => {
       player.target.playVideo()
     })
   },
