@@ -11,7 +11,6 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def render(assigns) do
-    IO.inspect(assigns, label: "assignsssss")
     ~L"""
     <div class="overlay" id="1" phx-hook="BroadcastMovement">
       <h2> Room: <span><b><%= @room.title %></b><span></h2>
@@ -29,7 +28,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    user = ConnectedUser.create_connected_user(slug)
+    user = ConnectedUser.create_connected_user(slug, socket.private.connect_params["me"])
 
     case Organizer.get_room(slug) do
       nil ->

@@ -5,13 +5,16 @@ import { Socket, Presence } from "phoenix";
 import NProgress from "nprogress";
 import { LiveSocket } from "phoenix_live_view";
 import { Scene } from "3d-css-scene";
+import { v4 as uuidv4 } from 'uuid';
 
 import Video from "./video"
 import BroadcastMovementHook from "./hooks/movement"
 
 const scene = new Scene();
 const room = scene.createRoom("room", 3600, 1080, 3000);
+const me = uuidv4();
 
+scene.me = me;
 // This element should be captured and inserted before any side-effect during
 // liveview hooks. For some reason, an appended element bugs the DOM whenever
 // it's being manipulated during a hook life-cycle.
@@ -42,9 +45,9 @@ Hooks.VideoPlaying = {
   }
 }
 
-let liveSocket = new LiveSocket("/live", Socket, {
+const liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
-  params: { _csrf_token: csrfToken },
+  params: { _csrf_token: csrfToken, me },
 });
 
 liveSocket.connect();

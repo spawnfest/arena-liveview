@@ -2,8 +2,11 @@ const BroadcastMovementHook = (scene) => ({
   mounted() {
     scene.camera.cameraObject.element.addEventListener(
       "move",
-      (event) => {
-        this.pushEvent("move", event.detail);
+      ({ detail: coords }) => {
+        this.pushEvent("move", {
+          user: scene.me,
+          coords,
+        });
       },
       false
     );
