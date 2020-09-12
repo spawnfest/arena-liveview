@@ -20,7 +20,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
           <li><%= uuid %></li>
         <% end %>
       </ul>
-      <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id] do %>
+      <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id, video_time: @room.video_time] do %>
       <% end %>
     </div>
     """
@@ -43,10 +43,10 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
       room ->
         {:ok,
           socket
-          |> assign(:room, room)
           |> assign(:user, user)
           |> assign(:slug, slug)
           |> assign(:connected_users, [])
+          |> assign_room(room)
         }
     end
   end
@@ -68,6 +68,37 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
     IO.puts "getting stuff"
     IO.inspect params
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("video-time-sync", current_time, socket) do
+    slug = socket.assigns.room.slug
+    room = Organizer.get_room(slug)
+    current_user = socket.assigns.user.uuid
+
+    case current_user == room.video_tracker do
+      true ->
+        {:ok, _updated_room} = Organizer.update_room(room, %{video_time: current_time})
+        {:noreply, socket}
+      false ->
+        {:noreply, socket}
+    end
+  end
+
+  defp assign_room(socket, room) do
+    presences = list_present(socket)
+    user = socket.assigns.user
+    filtered_presences = Enum.filter(presences, fn uuid -> uuid != user.uuid end)
+
+    case filtered_presences do
+      [] ->
+        {:ok, updated_room} = Organizer.update_room(room, %{video_time: 0, video_tracker: user.uuid})
+        socket
+        |> assign(:room, updated_room)
+      [x|xs] ->
+        socket
+        |> assign(:room, room)
+    end
   end
 
   defp list_present(socket) do
