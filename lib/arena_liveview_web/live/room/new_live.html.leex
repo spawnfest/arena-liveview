@@ -19,7 +19,7 @@
     <ul>
     <%= for room <- @public_rooms do %>
         <li>
-            <%= link room.title, to: Routes.show_path(@socket, :show, room.slug) %>
+            <%= live_redirect room.title, to: Routes.show_path(@socket, :show, room.slug) %> (<%= room.viewer_quantity %>)
         </li>
     <% end %>
     </ul>

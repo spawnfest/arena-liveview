@@ -6,18 +6,18 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   alias ArenaLiveview.Organizer
   alias ArenaLiveview.ConnectedUser
 
-  alias ArenaLiveviewWeb.Presence
   alias Phoenix.Socket.Broadcast
 
   @impl true
   def render(assigns) do
     ~L"""
     <div class="overlay" id="1" phx-hook="BroadcastMovement">
-      <h2> Room: <span><b><%= @room.title %></b><span></h2>
-      <h3>Live Users: <%= Enum.count(@connected_users) %></h3>
+      <h2> |> Room: <span><b><%= @room.title %></b><span></h2>
+      <h3> |> Live Users: <%= Enum.count(@connected_users) %></h3>
+      |> <br><rr>
       <ul>
         <%= for uuid <- @connected_users do %>
-          <li><img src="<%= ArenaLiveviewWeb.Endpoint.static_url() %>/images/test.png" alt="<%= uuid %> avatar" /></li>
+          <li><img src="<%= ArenaLiveviewWeb.Endpoint.static_url() %>/images/avatars/<%= uuid %>.png" alt="<%= uuid %> avatar" /></li>
         <% end %>
       </ul>
       <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id] do %>
@@ -28,7 +28,9 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    user = ConnectedUser.create_connected_user(slug, socket.private.connect_params["me"])
+    uuid = socket.private.connect_params["me"]
+    user = ConnectedUser.create_connected_user(slug, uuid)
+    ConnectedUser.create_user_avatar(uuid)
 
     case Organizer.get_room(slug) do
       nil ->
