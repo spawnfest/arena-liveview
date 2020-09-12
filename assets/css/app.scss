@@ -2,6 +2,17 @@
 @import "./phoenix.css";
 @import "../node_modules/nprogress/nprogress.css";
 @import "../node_modules/3d-css-scene/dist/app.css";
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;500&display=swap');
+
+body {
+  font-family: "Roboto Mono", monospace;
+  font-weight: 200;
+}
+
+h1 {
+  font-family: "Roboto Mono", monospace;
+  font-weight: 500;
+}
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
@@ -89,4 +100,29 @@
   color: #a94442;
   display: block;
   margin: -1rem 0 2rem;
+}
+
+
+/* Overlay */
+.overlay {
+  padding: 5px;
+  margin: 12px;
+  font-size: 0.58em;
+  position: fixed;
+  top: 10%;
+  right: 0%;
+  width: 25%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  display: block;
+  overflow: auto; 
+  outline: solid rgba(0, 255, 0, 0.1) 1px;
+}
+
+.overlay ul {
+  padding: 10px;
+}
+
+/*overlay in small devices*/
+@media (min-width: 40.0rem) { 
 }
