@@ -29,8 +29,8 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    user = create_connected_user()
-    IO.inspect(ArenaLiveviewWeb.Endpoint.static_url())
+    user = ConnectedUser.create_connected_user()
+
     Phoenix.PubSub.subscribe(ArenaLiveview.PubSub, "room:" <> slug)
     {:ok, _} = Presence.track(self(), "room:" <> slug, user.uuid, %{})
 
@@ -75,10 +75,5 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
     Presence.list("room:" <> socket.assigns.slug)
     # Check extra metadata needed from Presence
     |> Enum.map(fn {k, _} -> k end)
-  end
-
-  defp create_connected_user do
-    # Very simple new user implementation
-    %ConnectedUser{uuid: UUID.uuid4()}
   end
 end
