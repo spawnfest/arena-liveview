@@ -22,6 +22,20 @@ defmodule ArenaLiveview.Organizer do
   end
 
   @doc """
+  Returns the list of public rooms.
+
+  ## Examples
+
+      iex> list_public_rooms()
+      [%Room{}, ...]
+
+  """
+  def list_rooms_by_privacy(private) do
+    from(room in Room, where: room.private == ^private)
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single room.
 
   Raises `Ecto.NoResultsError` if the Room does not exist.

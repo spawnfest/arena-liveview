@@ -7,11 +7,11 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    rooms = Organizer.list_rooms()
+    public_rooms = Organizer.list_rooms_by_privacy(false)
 
     {:ok,
       socket
-      |> assign(:rooms, rooms)
+      |> assign(:public_rooms, public_rooms)
       |> put_changeset()
     }
   end
