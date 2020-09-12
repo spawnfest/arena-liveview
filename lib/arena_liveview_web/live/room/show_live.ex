@@ -33,24 +33,23 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
     case Organizer.get_room(slug) do
       nil ->
         {:ok,
-          socket
-          |> put_flash(:error, "That room does not exist.")
-          |> push_redirect(to: Routes.new_path(socket, :new))
-        }
+         socket
+         |> put_flash(:error, "That room does not exist.")
+         |> push_redirect(to: Routes.new_path(socket, :new))}
+
       room ->
         {:ok,
-          socket
-          |> assign(:room, room)
-          |> assign(:user, user)
-          |> assign(:slug, slug)
-          |> assign(:connected_users, [])
-        }
+         socket
+         |> assign(:room, room)
+         |> assign(:user, user)
+         |> assign(:slug, slug)
+         |> assign(:connected_users, [])}
     end
   end
 
   # This event comes from .js and its being broadcasted to the room
   @impl true
-  def handle_event("move", params, %{ assigns: %{ slug: slug } } = socket) do
+  def handle_event("move", params, %{assigns: %{slug: slug}} = socket) do
     ConnectedUser.broadcast_movement(slug, params)
     {:noreply, socket}
   end
@@ -58,19 +57,20 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   # We get moves from every connected user and send them back to .js
   def handle_info({:move, params}, socket) do
     {:noreply,
-      socket
-      |> push_event("move", %{movement: params})
-    }
+     socket
+     |> push_event("move", %{movement: params})}
   end
 
   @impl true
-  def handle_info(%Broadcast{event: "presence_diff"}, %{ assigns: %{ slug: slug } } = socket) do
+  def handle_info(
+        %Broadcast{event: "presence_diff", payload: payload},
+        %{assigns: %{slug: slug}} = socket
+      ) do
     presence = ConnectedUser.list_connected_users(slug)
 
     {:noreply,
-      socket
-      |> assign(:connected_users, presence)
-      |> push_event("presence-changed", %{presence: presence})
-    }
+     socket
+     |> assign(:connected_users, presence)
+     |> push_event("presence-changed", %{presence_diff: payload, presence: presence})}
   end
 end
