@@ -2,29 +2,16 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
   use ArenaLiveviewWeb, :live_view
 
   alias ArenaLiveview.Repo
+  alias ArenaLiveview.Organizer
   alias ArenaLiveview.Organizer.Room
 
   @impl true
-  def render(assigns) do
-    ~L"""
-    <h1>Create a New Room</h1>
-    <div>
-      <%= form_for @changeset, "#", [phx_change: "validate", phx_submit: "save"], fn f -> %>
-        <%= text_input f, :title, placeholder: "Title" %>
-        <%= error_tag f, :title %>
-        <%= text_input f, :slug, placeholder: "room-slug" %>
-        <%= error_tag f, :slug %>
-        <%= text_input f, :video_id, placeholder: "video id" %>
-        <%= submit "Save" %>
-      <% end %>
-    </div>
-    """
-  end
-
-  @impl true
   def mount(_params, _session, socket) do
+    rooms = Organizer.list_rooms()
+
     {:ok,
       socket
+      |> assign(:rooms, rooms)
       |> put_changeset()
     }
   end
