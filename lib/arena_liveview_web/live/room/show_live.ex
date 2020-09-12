@@ -12,17 +12,15 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def render(assigns) do
     ~L"""
-    <h1> Arena LiveView</h1>
-    <div class="overlay">
-      <h2 id="1" phx-hook="BroadcastMovement"> Room: <span><b><%= @room.title %></b><span></h2>
-      <h3>Connected Users: <%= Enum.count(@connected_users) %></h3>
-      <ul>
-        <%= for uuid <- @connected_users do %>
-          <li><%= uuid %></li>
-        <% end %>
-      </ul>
-    </div>
-
+    <h1 id="1" phx-hook="BroadcastMovement"><%= @room.title %></h1>
+    <h3>Connected Users:</h3>
+    <ul>
+    <%= for uuid <- @connected_users do %>
+      <li><%= uuid %></li>
+    <% end %>
+    </ul>
+    <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id] do %>
+    <% end %>
     """
   end
 

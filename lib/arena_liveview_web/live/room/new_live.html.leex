@@ -1,0 +1,26 @@
+<h1>Create a New Room</h1>
+<div>
+    <%= form_for @changeset, "#", [phx_change: "validate", phx_submit: "save"], fn f -> %>
+    <%= text_input f, :title, placeholder: "Title" %>
+    <%= error_tag f, :title %>
+    <%= text_input f, :slug, placeholder: "room-slug" %>
+    <%= error_tag f, :slug %>
+    <%= text_input f, :video_id, placeholder: "video id" %>
+    <p>
+        Private Room <%= checkbox f, :private %>
+    </p>
+    <%= submit "Save" %>
+    <% end %>
+</div>
+<div>
+    <h3> Room list: </h3>
+    <ul>
+    <%= for room <- @rooms do %>
+        <li>
+            <%= if not room.private do %>
+                <%= link room.title, to: Routes.show_path(@socket, :show, room.slug) %>
+            <% end %>
+        </li>
+    <% end %>
+    </ul>
+</div>
