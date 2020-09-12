@@ -32,11 +32,14 @@ Hooks.BroadcastMovement = {
     scene.camera.cameraObject.element.addEventListener(
       "move",
       function (event) {
-        self.pushEvent("publish-move", event.detail);
+        self.pushEvent("move", event.detail);
       },
       false
     );
     this.handleEvent("presence-changed", (thing) =>
+      console.log(JSON.stringify(thing, null, 2))
+    );
+    this.handleEvent("move", (thing) =>
       console.log(JSON.stringify(thing, null, 2))
     );
   },
@@ -63,10 +66,6 @@ let liveSocket = new LiveSocket("/live", Socket, {
 });
 
 liveSocket.connect();
-
-const socket = liveSocket.getSocket();
-console.log(socket);
-console.log(socket.channels[0]);
 window.liveSocket = liveSocket;
 
 room.translateZ(-200);

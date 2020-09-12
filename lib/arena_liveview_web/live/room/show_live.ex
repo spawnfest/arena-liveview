@@ -12,8 +12,8 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def render(assigns) do
     ~L"""
-    <div class="overlay">
-      <h2 id="1" phx-hook="BroadcastMovement"> Room: <span><b><%= @room.title %></b><span></h2>
+    <div class="overlay" id="1" phx-hook="BroadcastMovement">
+      <h2> Room: <span><b><%= @room.title %></b><span></h2>
       <h3>Connected Users: <%= Enum.count(@connected_users) %></h3>
       <ul>
         <%= for uuid <- @connected_users do %>
@@ -28,10 +28,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    user = ConnectedUser.create_connected_user()
-
-    Phoenix.PubSub.subscribe(ArenaLiveview.PubSub, "room:" <> slug)
-    {:ok, _} = Presence.track(self(), "room:" <> slug, user.uuid, %{})
+    user = ConnectedUser.create_connected_user(slug)
 
     case Organizer.get_room(slug) do
       nil ->
@@ -51,28 +48,29 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
     end
   end
 
+  # This event comes from .js and its being broadcasted to the room
   @impl true
-  def handle_info(%Broadcast{event: "presence_diff"}, socket) do
-    presence = list_present(socket)
+  def handle_event("move", params, %{ assigns: %{ slug: slug } } = socket) do
+    ConnectedUser.broadcast_movement(slug, params)
+    {:noreply, socket}
+  end
+
+  # We get moves from every connected user and send them back to .js
+  def handle_info({:move, params}, socket) do
+    {:noreply,
+      socket
+      |> push_event("move", %{movement: params})
+    }
+  end
+
+  @impl true
+  def handle_info(%Broadcast{event: "presence_diff"}, %{ assigns: %{ slug: slug } } = socket) do
+    presence = ConnectedUser.list_connected_users(slug)
 
     {:noreply,
       socket
       |> assign(:connected_users, presence)
       |> push_event("presence-changed", %{presence: presence})
     }
-  end
-
-  @impl true
-  def handle_event("publish-move", params, socket) do
-    #
-    IO.puts "getting stuff"
-    IO.inspect params
-    {:noreply, socket}
-  end
-
-  defp list_present(socket) do
-    Presence.list("room:" <> socket.assigns.slug)
-    # Check extra metadata needed from Presence
-    |> Enum.map(fn {k, _} -> k end)
   end
 end
