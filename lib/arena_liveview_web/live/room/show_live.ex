@@ -37,9 +37,8 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
     with uuid <- UUID.uuid4(),
+         :ok <- ConnectedUser.create_user_avatar(uuid),
          user <- ConnectedUser.create_connected_user(uuid, slug) do
-
-      ConnectedUser.create_user_avatar(uuid)
 
       case Organizer.get_room(slug) do
         nil ->
