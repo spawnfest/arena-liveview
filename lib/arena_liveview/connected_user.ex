@@ -8,12 +8,13 @@ defmodule ArenaLiveview.ConnectedUser do
   def create_connected_user(uuid, slug) do
     Phoenix.PubSub.subscribe(ArenaLiveview.PubSub, "room:" <> slug)
     {:ok, _} = Presence.track(self(), "room:" <> slug, uuid, %{})
+
     %ConnectedUser{uuid: uuid}
   end
 
   def list_connected_users(slug) do
-    Presence.list("room:" <> slug)
     # Check extra metadata needed from Presence
+    Presence.list("room:" <> slug)
     |> Enum.map(fn {k, _} -> k end)
   end
 
