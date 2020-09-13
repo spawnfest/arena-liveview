@@ -9,15 +9,61 @@ body {
   font-weight: 200;
 }
 
-h1 {
+h1, h2 {
+  font-weight: 200;
+}
+
+h2 {
+  font-size: 0.725em;
+}
+
+header.container  {
+  background: rgba(6, 6, 6, 0.8);
+  margin: 10px 0; 
+}
+
+/* rewrite input rules*/
+
+.section-container input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  border: dotted rgba(0, 255, 0, 0.1) 1px;
+  border-radius: 0; 
+  box-shadow: none;
+  box-sizing: inherit;
+  height: 1.625em;
+  padding: 12px;
+  color: orangered;
   font-family: "Roboto Mono", monospace;
-  font-weight: 500;
+  font-weight: 200;
+   width: 80%;
+}
+label {
+  display: inline;
+  
 }
 
-header {
-  background: rgba(6,6,6,0.2);
+p, label, .section-container .invalid-feedback {
+  font-size: 0.525em;
+  color: orangered;
 }
 
+
+button {
+  border-radius: 0;
+  background-color: transparent;
+  border: dotted rgba(0, 255, 0, 0.1) 1px;
+  display: block;
+  margin: 20px auto;
+  color: orangered;
+  text-transform:lowercase;
+}
+
+button:hover {
+  background-color: #4e2a8e;
+}
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
@@ -106,11 +152,21 @@ header {
   margin: -1rem 0 2rem;
 }
 
+/* columns containers*/
+.col-container {
+  display: table; /* Make the container element behave like a table */
+  width: 100%; /* Set full-width to expand the whole page */
+}
+
+.col {
+  display: table-cell; /* Make elements inside the container behave like table cells */
+}
+
+
 /* Overlay */
 .overlay {
   padding: 5px;
   margin: 12px;
-  font-size: 0.42em;
   position: fixed;
   top: 10%;
   right: 2%;
@@ -175,4 +231,73 @@ span.blink {
 
 .hide {
   display: none; 
+}
+
+.like-atom {
+  color: orangered;
+  text-align: left;
+  
+}
+
+.like-atom::before {
+  content: ":";
+}
+
+.like-list, .like-list ul li a {
+  color: #4e2a8e;
+  text-decoration:none;
+  font-size: 0.625em;
+}
+
+.like-list::before {
+  content: "[";
+  color: #4e2a8e;
+  font-weight: 500;
+}
+
+.like-list::after {
+  content: "]";
+  color: #4e2a8e;
+  font-weight: 500;
+}
+
+.like-list a:link {
+  color: #4e2a8e;
+  font-size: 1em;
+  margin-left: 20px;
+}
+
+.like-list li::after {
+  content: ",";
+  
+  font-weight: 500;
+}
+
+
+.like-struct {
+  color: #4e2a8e;
+}
+
+.like-struct::before {
+  content: "%";
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+.like-struct::after {
+  content:"{}";
+  letter-spacing: 5px;
+  font-weight: 500;
+}
+
+.section-container {
+  padding: 25px;
+  margin: 12px auto;
+  width: 45%;
+  clear:left;
+  border: dotted rgba(0, 255, 0, 0.1) 1px;
+}
+
+.section-container:nth-child(2) {
+  border-left: none;
 }
