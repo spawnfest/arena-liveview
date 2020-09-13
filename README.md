@@ -18,7 +18,7 @@ This project is a LiveView implementation of the [3d-css-scene package](https://
 ## Implementation
 
 This initial implementation is carried out as part of the [Spawnfest 2020](https://spawnfest.github.io/) hackathon and contains.
-This web application allows users to create or join rooms where other people can join and share a synchronized youtube experience together. As part of the 3D scene, roomates are be able to see each other running around while listening.
+This web application allows users to create or join rooms where other people can join and share a synchronized youtube experience together. As part of the 3D scene, roomates are able to see each other running around while listening.
 The user interface is quite simple. It allows users to see and join any of the available public rooms, keep track of how many arenies are gathered together. They also get a temporary unique avatar, all in a fancy elixirish styled overlay.
 
 ### Creating a room
