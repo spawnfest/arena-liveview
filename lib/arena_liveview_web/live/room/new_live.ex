@@ -6,20 +6,14 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Organizer.subscribe()
-      :timer.send_interval(1000, self(), :reload_room_list)
-    end
+    Organizer.subscribe()
+    public_rooms = for room <- Organizer.list_rooms_by_privacy(false), do: {room, Organizer.viewers_quantity(room)}
 
-    public_rooms = get_rooms_with_viewers()
-
-    socket =
+    {:ok,
       socket
       |> assign(:public_rooms, public_rooms)
       |> put_changeset()
-
-
-    {:ok, socket, temporary_assigns: [public_rooms: []]}
+    }
   end
 
   @impl true
@@ -34,13 +28,12 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:reload_room_list, socket) do
+  def handle_info({:enter_room, room}, socket) do
     socket =
       update(
         socket,
         :public_rooms,
-        fn _public_rooms -> get_rooms_with_viewers() end
+        fn public_rooms -> [{room, Organizer.viewers_quantity(room)} | public_rooms] end
       )
 
     {:noreply, socket}
@@ -70,12 +63,15 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
     end
   end
 
+  def handle_event("reload-assistants", %{"slug" => slug}, socket) do
+    room = Organizer.get_room(slug)
+    Organizer.broadcast(:enter_room, room)
+    {:noreply, socket}
+  end
+
   defp put_changeset(socket, params \\ %{}) do
     socket
     |> assign(:changeset, Room.changeset(%Room{}, params))
   end
 
-  defp get_rooms_with_viewers() do
-    for room <- Organizer.list_rooms_by_privacy(false), do: {room, Organizer.viewers_quantity(room)}
-  end
 end
