@@ -50,7 +50,7 @@ const BroadcastMovementHook = (scene) => ({
 
         if (avatar) {
           avatar.translateX(coords.posX);
-          avatar.translateY(coords.posY);
+          // avatar.translateY(coords.posY);
           avatar.translateZ(coords.posZ);
           // avatar.rotateX(coords.rotX);
           // avatar.rotateY(coords.rotY);
