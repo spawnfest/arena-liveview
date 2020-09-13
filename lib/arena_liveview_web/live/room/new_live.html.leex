@@ -40,9 +40,10 @@
     <h2 class="like-atom">room_list</h2>
     <span ><span>
     <ul class="like-list">
-    <%= for {room, viewers_quantity} <- @public_rooms do %>
-        <li phx-click="reload-assistants" phx-value-slug="<%= room.slug %>">
-            <%= live_redirect room.title, to: Routes.show_path(@socket, :show, room.slug) %> (<%= viewers_quantity %>)
+    <%= for room <- @public_rooms do %>
+        <li>
+            <%= live_redirect room.title, to: Routes.show_path(@socket, :show, room.slug) %>
+            (<%= @viewers_quantity[String.to_atom(room.title)] %>)
         </li>
     <% end %>
     </ul>
