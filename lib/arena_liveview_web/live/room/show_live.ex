@@ -12,7 +12,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   def render(assigns) do
     ~L"""
     <div class="overlay" id="1" phx-hook="BroadcastMovement" data-user="<%= @user.uuid %>" data-users="<%= inspect @connected_users %>">
-      <p>
+      <p <%= if @hide_info do "class=hide" end %> >
         <span class="blink">|> </span>
         Room: <span><b><%= @room.title %></b><span>
       </p>
@@ -31,7 +31,10 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
       <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id, video_time: @room.video_time] do %>
       <% end %>
       <div >
+      <p>
         <span class="blink toggle-pipe <%= if @hide_info do 'down' end %>" phx-click="toggle_overlay"> |> </span>
+         <%= if @hide_info do @room.title end %>
+      </p>
       </div>
     </div>
     """
@@ -44,7 +47,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
          user <- ConnectedUser.create_connected_user(uuid, slug) do
 
       ConnectedUser.create_user_avatar(uuid)
-        
+
       connected_users = ConnectedUser.list_connected_users(slug)
       other_connected_users = Enum.filter(connected_users, fn uuid -> uuid != user.uuid end)
 
