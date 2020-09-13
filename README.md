@@ -4,6 +4,17 @@
 
 This project is a LiveView implementation of the [3d-css-scene package](https://www.npmjs.com/package/3d-css-scene), integrated with Phoenix Sockets and [Presence](https://hexdocs.pm/phoenix/Phoenix.Presence.html) to track and broacast connections and movement in a 3D room.
 
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=-FYJf__jmAY" target="_blank">
+    <img src="public/demo.gif" width="50%">
+  </a>
+  <br/>
+  <br/>
+  <a href="https://pure-journey-52122.herokuapp.com/">
+   <strong>Live demo!</strong>
+  </a>
+</p>
+
 ## Implementation
 
 This initial implementation is carried out as part of the [Spawnfest 2020](https://spawnfest.github.io/) hackathon and contains.
@@ -31,6 +42,7 @@ Upon visiting the site you can create rooms by providing:
 
 ### Future features
 
++ Ability to delete rooms
 + User profile. Ability to assign you own name, social network, ids, status.
 + Movements interpolation
 + General and p2p chats
