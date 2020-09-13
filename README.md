@@ -19,7 +19,7 @@ Upon visiting the site you can create rooms by providing:
 + `video url` this is an optional youtube url to get the room funkier. Live videos are allowed!
 + `privacy` you can create private rooms by checking this box. This will only affect the public room list, users will be able to join by visiting the `slug` url.
 
-### Features
+### Current Features
 
 + Public rooms creation
 + Private rooms creations
@@ -28,6 +28,18 @@ Upon visiting the site you can create rooms by providing:
 + Video time tracking upon leaving room
 + Users movement tracking and rendering
 + Temporary dynamically generated avatars for joiners
+
+### Feature features
+
++ User profile. Ability to assign you own name, social network, ids, status.
++ Movements interpolation
++ General and p2p chats
++ Collision engine integration
++ Collaborative room construction engine
++ Voice chat (web RTC)
++ Avatar color selection
++ Mobile responsiveness
++ Mobile sensors integration
 
 ## Quick development start
 
