@@ -159,3 +159,20 @@ span.blink {
     opacity: .5; }
   100% {
     opacity: 2; } }
+
+
+.toggle-pipe {
+  width: initial;
+  height: initial;
+  transform: rotate(-90deg);
+  display: inline-block;
+  cursor:  pointer;
+}
+
+.toggle-pipe.down {
+  transform: rotate(90deg);
+}
+
+.hide {
+  display: none; 
+}

@@ -11,15 +11,15 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def render(assigns) do
     ~L"""
-      <div class="overlay" id="1" phx-hook="BroadcastMovement">
+    <div class="overlay" id="1" phx-hook="BroadcastMovement">
       <p>
         <span class="blink">|> </span>
         Room: <span><b><%= @room.title %></b><span>
       </p>
-      <p> <span class="blink">|> </span>
+      <p <%= if @hide_info do "class=hide" end %> > <span class="blink">|> </span>
         Live Users: <%= Enum.count(@connected_users) %>
       </p>
-      <ul>
+      <ul <%= if @hide_info do "class=hide" end %> >
         <%= if @connected_users != [] do %>
           <%= for uuid <- @connected_users do %>
             <li><img src="<%= ArenaLiveviewWeb.Endpoint.static_url() %>/images/avatars/<%= uuid %>.png" alt="<%= uuid %> avatar" /></li>
@@ -30,6 +30,9 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
       </ul>
       <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id, video_time: @room.video_time] do %>
       <% end %>
+      <div >
+        <span class="blink toggle-pipe <%= if @hide_info do 'down' end %>" phx-click="toggle_overlay"> |> </span>
+      </div>
     </div>
     """
   end
@@ -56,6 +59,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
           |> assign(:slug, slug)
           |> assign(:connected_users, [])
           |> assign_room(room)
+          |> assign(:hide_info, false)
         }
       end
     end
@@ -82,6 +86,12 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
         {:noreply, socket}
     end
   end
+
+  @impl true
+  def handle_event("toggle_overlay", _params, socket) do
+    {:noreply, assign(socket, :hide_info, !socket.assigns.hide_info)}
+  end
+
 
   # We get moves from every connected user and send them back to .js
   def handle_info({:move, params}, socket) do
