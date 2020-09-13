@@ -71,6 +71,8 @@ The following `make` commands will source the `.env` file before running their c
   * Start a `phx.server` inside an `iex` session with `make server`
   * Run `mix test` with `make test`
 
+> *We recommend using Chrome for better experience.*
+
 ---
 
 The avatar generator module comes from [identikoso](https://github.com/casanovajose/identikoso)
