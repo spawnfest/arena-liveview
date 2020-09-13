@@ -46,8 +46,6 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
          :ok <- ConnectedUser.create_user_avatar(uuid),
          user <- ConnectedUser.create_connected_user(uuid, slug) do
 
-      ConnectedUser.create_user_avatar(uuid)
-
       connected_users = ConnectedUser.list_connected_users(slug)
       other_connected_users = Enum.filter(connected_users, fn uuid -> uuid != user.uuid end)
 
