@@ -29,7 +29,7 @@ Upon visiting the site you can create rooms by providing:
 + Users movement tracking and rendering
 + Temporary dynamically generated avatars for joiners
 
-### Feature features
+### Future features
 
 + User profile. Ability to assign you own name, social network, ids, status.
 + Movements interpolation
@@ -60,5 +60,7 @@ The following `make` commands will source the `.env` file before running their c
   * Run `mix test` with `make test`
 
 ---
+
+The avatar generator module comes from [identikoso](https://github.com/casanovajose/identikoso)
 
 Developed by the Spawnfest's [coop team](@spawnfest/coop-team). Go co-ops!
