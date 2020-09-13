@@ -5,7 +5,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   use ArenaLiveviewWeb, :live_view
   alias ArenaLiveview.Organizer
   alias ArenaLiveview.ConnectedUser
-
+  alias ArenaLiveviewWeb.Presence
   alias Phoenix.Socket.Broadcast
 
   @impl true
@@ -28,7 +28,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
           <div class="loader">Loading...</div>
         <% end %>
       </ul>
-      <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id] do %>
+      <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id, video_time: @room.video_time] do %>
       <% end %>
     </div>
     """
@@ -40,20 +40,23 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
          :ok <- ConnectedUser.create_user_avatar(uuid),
          user <- ConnectedUser.create_connected_user(uuid, slug) do
 
-      case Organizer.get_room(slug) do
-        nil ->
-          {:ok,
-           socket
-           |> put_flash(:error, "That room does not exist.")
-           |> push_redirect(to: Routes.new_path(socket, :new))}
+      ConnectedUser.create_user_avatar(uuid)
 
-        room ->
-          {:ok,
-           socket
-           |> assign(:room, room)
-           |> assign(:user, user)
-           |> assign(:slug, slug)
-           |> assign(:connected_users, [])}
+    case Organizer.get_room(slug) do
+      nil ->
+        {:ok,
+          socket
+          |> put_flash(:error, "That room does not exist.")
+          |> push_redirect(to: Routes.new_path(socket, :new))
+        }
+      room ->
+        {:ok,
+          socket
+          |> assign(:user, user)
+          |> assign(:slug, slug)
+          |> assign(:connected_users, [])
+          |> assign_room(room)
+        }
       end
     end
   end
@@ -63,6 +66,21 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   def handle_event("move", params, %{assigns: %{slug: slug}} = socket) do
     ConnectedUser.broadcast_movement(slug, params)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("video-time-sync", current_time, socket) do
+    slug = socket.assigns.room.slug
+    room = Organizer.get_room(slug)
+    current_user = socket.assigns.user.uuid
+
+    case current_user == room.video_tracker do
+      true ->
+        {:ok, _updated_room} = Organizer.update_room(room, %{video_time: current_time})
+        {:noreply, socket}
+      false ->
+        {:noreply, socket}
+    end
   end
 
   # We get moves from every connected user and send them back to .js
@@ -87,5 +105,27 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
        presence: presence,
        uuid: user.uuid
      })}
+  end
+
+  defp assign_room(socket, room) do
+    presences = list_present(socket)
+    user = socket.assigns.user
+    filtered_presences = Enum.filter(presences, fn uuid -> uuid != user.uuid end)
+
+    case filtered_presences do
+      [] ->
+        {:ok, updated_room} = Organizer.update_room(room, %{video_time: 0, video_tracker: user.uuid})
+        socket
+        |> assign(:room, updated_room)
+      _xs ->
+        socket
+        |> assign(:room, room)
+    end
+  end
+
+  defp list_present(socket) do
+    Presence.list("room:" <> socket.assigns.slug)
+    # Check extra metadata needed from Presence
+    |> Enum.map(fn {k, _} -> k end)
   end
 end
