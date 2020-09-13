@@ -144,7 +144,7 @@ defmodule ArenaLiveview.Organizer do
   end
 
   def broadcast(event, room) do
-    Phoenix.PubSub.broadcast(ArenaLiveview.PubSub, "rooms", {event, room: room})
+    Phoenix.PubSub.broadcast(ArenaLiveview.PubSub, "rooms", {event, room})
   end
 
 end
