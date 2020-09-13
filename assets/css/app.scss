@@ -9,6 +9,15 @@ body {
   font-weight: 200;
 }
 
+.container .alert-danger {
+  color: orangered;
+  background-color: transparent;
+  border: dotted #4e2a8e 1px;
+  border-radius: 0px;
+  text-align: center;
+  font-weight: 500;
+}
+
 h1, h2 {
   font-weight: 200;
 }
@@ -23,14 +32,10 @@ header.container  {
 }
 
 /* rewrite input rules*/
-
-.section-container input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+.section-container input {  
   background-color: transparent;
   border: dotted rgba(0, 255, 0, 0.1) 1px;
-  border-radius: 0; 
+  border-radius: 0;
   box-shadow: none;
   box-sizing: inherit;
   height: 1.625em;
@@ -38,8 +43,16 @@ header.container  {
   color: orangered;
   font-family: "Roboto Mono", monospace;
   font-weight: 200;
-   width: 80%;
+  width: 80%;
 }
+
+input[type="checkbox"] {
+  width: 15px;
+  position: relative;
+  top: 5px;
+}
+
+
 label {
   display: inline;
   
