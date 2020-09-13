@@ -1,4 +1,5 @@
 defmodule Identicon do
+  def main(nil, _), do: nil
   def main(input, path) do
     input
     |> hash_input
@@ -11,7 +12,6 @@ defmodule Identicon do
   end
 
   def save_image(image, path) do
-    # IO.inspect("#{path}.png");
     File.write("#{path}.png", image)
   end
 

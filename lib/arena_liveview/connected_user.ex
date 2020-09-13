@@ -4,8 +4,8 @@ defmodule ArenaLiveview.ConnectedUser do
   alias ArenaLiveviewWeb.Presence
   alias Identicon
 
-  def create_connected_user(slug, me) do
-    uuid = me
+  def create_connected_user(nil, _), do: nil
+  def create_connected_user(uuid, slug) do
     Phoenix.PubSub.subscribe(ArenaLiveview.PubSub, "room:" <> slug)
     {:ok, _} = Presence.track(self(), "room:" <> slug, uuid, %{})
     %ConnectedUser{uuid: uuid}

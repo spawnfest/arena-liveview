@@ -33,7 +33,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
     uuid = socket.private.connect_params["me"]
-    user = ConnectedUser.create_connected_user(slug, uuid)
+    user = ConnectedUser.create_connected_user(uuid, slug)
     ConnectedUser.create_user_avatar(uuid)
 
     case Organizer.get_room(slug) do
