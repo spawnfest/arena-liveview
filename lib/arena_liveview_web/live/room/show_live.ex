@@ -20,8 +20,12 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
         Live Users: <%= Enum.count(@connected_users) %>
       </p>
       <ul>
-        <%= for uuid <- @connected_users do %>
-          <li><img src="<%= ArenaLiveviewWeb.Endpoint.static_url() %>/images/avatars/<%= uuid %>.png" alt="<%= uuid %> avatar" /></li>
+        <%= if @connected_users != [] do %>
+          <%= for uuid <- @connected_users do %>
+            <li><img src="<%= ArenaLiveviewWeb.Endpoint.static_url() %>/images/avatars/<%= uuid %>.png" alt="<%= uuid %> avatar" /></li>
+          <% end %>
+        <% else %>
+          <div class="loader">Loading...</div>
         <% end %>
       </ul>
       <%= content_tag :div, id: 'video-player', 'phx-hook': "VideoPlaying", data: [video_id: @room.video_id] do %>
@@ -32,24 +36,26 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    uuid = socket.private.connect_params["me"]
-    user = ConnectedUser.create_connected_user(uuid, slug)
-    ConnectedUser.create_user_avatar(uuid)
+    with uuid <- UUID.uuid4(),
+         user <- ConnectedUser.create_connected_user(uuid, slug) do
 
-    case Organizer.get_room(slug) do
-      nil ->
-        {:ok,
-         socket
-         |> put_flash(:error, "That room does not exist.")
-         |> push_redirect(to: Routes.new_path(socket, :new))}
+      ConnectedUser.create_user_avatar(uuid)
 
-      room ->
-        {:ok,
-         socket
-         |> assign(:room, room)
-         |> assign(:user, user)
-         |> assign(:slug, slug)
-         |> assign(:connected_users, [])}
+      case Organizer.get_room(slug) do
+        nil ->
+          {:ok,
+           socket
+           |> put_flash(:error, "That room does not exist.")
+           |> push_redirect(to: Routes.new_path(socket, :new))}
+
+        room ->
+          {:ok,
+           socket
+           |> assign(:room, room)
+           |> assign(:user, user)
+           |> assign(:slug, slug)
+           |> assign(:connected_users, [])}
+      end
     end
   end
 
@@ -70,13 +76,17 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def handle_info(
         %Broadcast{event: "presence_diff", payload: payload},
-        %{assigns: %{slug: slug}} = socket
+        %{assigns: %{slug: slug, user: user}} = socket
       ) do
     presence = ConnectedUser.list_connected_users(slug)
 
     {:noreply,
      socket
      |> assign(:connected_users, presence)
-     |> push_event("presence-changed", %{presence_diff: payload, presence: presence})}
+     |> push_event("presence-changed", %{
+       presence_diff: payload,
+       presence: presence,
+       uuid: user.uuid
+     })}
   end
 end

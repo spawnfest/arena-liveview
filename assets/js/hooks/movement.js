@@ -1,4 +1,5 @@
 const avatars = new Map();
+let user;
 let connectedUsers;
 
 const BroadcastMovementHook = (scene) => ({
@@ -7,7 +8,7 @@ const BroadcastMovementHook = (scene) => ({
       "move",
       ({ detail: coords }) => {
         this.pushEvent("move", {
-          user: scene.me,
+          uuid: user,
           coords,
         });
       },
@@ -15,30 +16,37 @@ const BroadcastMovementHook = (scene) => ({
     );
 
     // Handlers for presence and move
-    this.handleEvent("presence-changed", ({ presence_diff, presence }) => {
-      const joins = Object.keys(presence_diff.joins);
-      const leaves = Object.keys(presence_diff.leaves);
-
-      connectedUsers = new Set(presence);
-
-      leaves.forEach((leave) => {
-        if (leave !== scene.me) {
-          const avatar = avatars.get(leave);
-          scene.removeAvatar(avatar);
-          avatars.delete(leave);
+    this.handleEvent(
+      "presence-changed",
+      ({ presence_diff, presence, uuid }) => {
+        if (user === undefined) {
+          user = uuid;
         }
-      });
-      joins.forEach((join) => {
-        if (join !== scene.me) {
-          const newAvatar = scene.createAvatar("user");
-          newAvatar.update();
-          avatars.set(join, newAvatar);
-        }
-      });
-    });
+        const joins = Object.keys(presence_diff.joins);
+        const leaves = Object.keys(presence_diff.leaves);
+
+        connectedUsers = new Set(presence);
+
+        leaves.forEach((leave) => {
+          if (leave !== user) {
+            const avatar = avatars.get(leave);
+            scene.removeAvatar(avatar);
+            avatars.delete(leave);
+          }
+        });
+        joins.forEach((join) => {
+          if (join !== user) {
+            const newAvatar = scene.createAvatar("user");
+            newAvatar.update();
+            avatars.set(join, newAvatar);
+          }
+        });
+      }
+    );
+
     this.handleEvent("move", ({ movement }) => {
-      const { coords, user } = movement;
-      if (user !== scene.me) {
+      const { coords, uuid } = movement;
+      if (user !== uuid) {
         const updateAvatar = avatars.get(user);
         if (updateAvatar) {
           updateAvatar.translateX(coords.posX);

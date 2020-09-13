@@ -58,7 +58,7 @@ config :arena_liveview, ArenaLiveviewWeb.Endpoint,
 config :arena_liveview, ArenaLiveviewWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/static/.*(js|css|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/arena_liveview_web/(live|views)/.*(ex)$",
       ~r"lib/arena_liveview_web/templates/.*(eex)$"
