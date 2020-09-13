@@ -6,8 +6,8 @@ import NProgress from "nprogress";
 import { LiveSocket } from "phoenix_live_view";
 import { Scene } from "3d-css-scene";
 
-import Video from "./video";
 import BroadcastMovementHook from "./hooks/movement";
+import VideoPlayingHook from "./hooks/video-playing";
 
 const scene = new Scene();
 const room = scene.createRoom("room", 3600, 1080, 3000);
@@ -28,25 +28,9 @@ const csrfToken = document
 
 let Hooks = {
   BroadcastMovement: BroadcastMovementHook(scene),
+  VideoPlaying: VideoPlayingHook(playerContainer)
 };
 
-Hooks.VideoPlaying = {
-  mounted() {
-    const { videoId, videoTime } = this.el.dataset
-    videoId && Video.init(playerContainer, videoId, (player) => {
-      player.target.playVideo()
-      player.target.seekTo(videoTime)
-
-      setInterval(() => {
-        const currentTime = player.target.getCurrentTime()
-        this.pushEvent('video-time-sync', currentTime)
-      }, 3000)
-    })
-  },
-  updated() {
-    console.log("Updated?");
-  },
-};
 
 const liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
