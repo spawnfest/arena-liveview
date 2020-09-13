@@ -9,7 +9,7 @@ defmodule ArenaLiveview.Organizer.Room do
   schema "rooms" do
     field :title, :string
     field :slug, :string
-    field :private, :boolean, default: true
+    field :private, :boolean, default: false
     field :video_id, :string
     field :video_time, :float, default: 0.0
     field :video_tracker, :string
