@@ -16,9 +16,9 @@
 <%= if @public_rooms != [] do %>
 <div>
     <h3> Room list: </h3>
-    <ul id="public_rooms" phx-update="append">
+    <ul>
     <%= for {room, viewers_quantity} <- @public_rooms do %>
-        <li id="<%= room.slug %>">
+        <li phx-click="reload-assistants" phx-value-slug="<%= room.slug %>">
             <%= live_redirect room.title, to: Routes.show_path(@socket, :show, room.slug) %> (<%= viewers_quantity %>)
         </li>
     <% end %>
