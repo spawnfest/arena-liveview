@@ -11,7 +11,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
   @impl true
   def render(assigns) do
     ~L"""
-    <div class="overlay" id="1" phx-hook="BroadcastMovement">
+    <div class="overlay" id="1" phx-hook="BroadcastMovement" data-user="<%= @user.uuid %>" data-users="<%= inspect @connected_users %>">
       <p>
         <span class="blink">|> </span>
         Room: <span><b><%= @room.title %></b><span>
@@ -44,6 +44,9 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
          user <- ConnectedUser.create_connected_user(uuid, slug) do
 
       ConnectedUser.create_user_avatar(uuid)
+        
+      connected_users = ConnectedUser.list_connected_users(slug)
+      other_connected_users = Enum.filter(connected_users, fn uuid -> uuid != user.uuid end)
 
     case Organizer.get_room(slug) do
       nil ->
@@ -57,7 +60,7 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
           socket
           |> assign(:user, user)
           |> assign(:slug, slug)
-          |> assign(:connected_users, [])
+          |> assign(:connected_users, IO.inspect other_connected_users)
           |> assign_room(room)
           |> assign(:hide_info, false)
         }
