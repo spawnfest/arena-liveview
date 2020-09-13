@@ -110,6 +110,8 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
       ) do
     presence = ConnectedUser.list_connected_users(slug)
 
+    handle_video_tracker_activity(slug, presence, payload)
+
     {:noreply,
      socket
      |> assign(:connected_users, presence)
@@ -118,6 +120,23 @@ defmodule ArenaLiveviewWeb.Room.ShowLive do
        presence: presence,
        uuid: user.uuid
      })}
+  end
+
+  defp handle_video_tracker_activity(slug, presence, %{leaves: leaves}) do
+    room = Organizer.get_room(slug)
+    video_tracker = room.video_tracker
+
+    case video_tracker in leaves do
+      false -> nil
+      case presence do
+        [] -> nil
+        presences ->
+          first_presence = hd presences
+          IO.inspect "::: First Presence :::"
+          IO.inspect video_tracker
+          Organizer.update_room(room, %{video_tracker: first_presence})
+      end
+    end
   end
 
   defp assign_room(socket, room) do
