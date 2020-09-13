@@ -1,4 +1,11 @@
 defmodule Identicon do
+  @moduledoc """
+  creates png avatars like github identicoins based on the input string
+  """
+
+  @doc """
+  main pipeline for image creation
+  """
   def main(nil, _), do: nil
   def main(input, path) do
     input
@@ -11,10 +18,19 @@ defmodule Identicon do
     |> save_image(path)
   end
 
+  @doc """
+  Saves the png file
+
+  Returns `:ok`
+  Returns `{:error, :enoent}`
+  """
   def save_image(image, path) do
     File.write("#{path}.png", image)
   end
 
+  @doc """
+  uses the egd erlang module to render a png image
+  """
   def draw_image(%Identicon.Image{color: color, pixel_map: pixel_map}) do
     image = :egd.create(250, 250)
     fill = :egd.color(color)
@@ -26,6 +42,9 @@ defmodule Identicon do
     :egd.render(image)
   end
 
+  @doc """
+  Builds a pixel map grid
+  """
   def build_pixel_map(%Identicon.Image{grid: grid} = image) do
     pixel_map = Enum.map grid, fn({_code, index}) ->
       horizontal = rem(index, 5) * 50
