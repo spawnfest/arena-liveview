@@ -1,9 +1,13 @@
-const avatars = new Map();
-let user;
-let connectedUsers;
-
 const BroadcastMovementHook = (scene) => ({
   mounted() {
+    const { user, users: _users } = this.el.dataset
+    const users = JSON.parse(_users)
+    const avatars = new Map();
+
+    users.forEach(user => {
+      avatars.set(user, scene.createAvatar(user))
+    })
+
     scene.camera.cameraObject.element.addEventListener(
       "move",
       ({ detail: coords }) => {
@@ -19,13 +23,8 @@ const BroadcastMovementHook = (scene) => ({
     this.handleEvent(
       "presence-changed",
       ({ presence_diff, presence, uuid }) => {
-        if (user === undefined) {
-          user = uuid;
-        }
         const joins = Object.keys(presence_diff.joins);
         const leaves = Object.keys(presence_diff.leaves);
-
-        connectedUsers = new Set(presence);
 
         leaves.forEach((leave) => {
           if (leave !== user) {
@@ -47,15 +46,16 @@ const BroadcastMovementHook = (scene) => ({
     this.handleEvent("move", ({ movement }) => {
       const { coords, uuid } = movement;
       if (user !== uuid) {
-        const updateAvatar = avatars.get(user);
-        if (updateAvatar) {
-          updateAvatar.translateX(coords.posX);
-          updateAvatar.translateY(coords.posY);
-          updateAvatar.translateZ(coords.posZ);
-          // updateAvatar.rotateX(coords.rotX);
-          // updateAvatar.rotateY(coords.rotY);
-          // updateAvatar.rotateZ(coords.rotZ);
-          updateAvatar.update();
+        const avatar = avatars.get(uuid);
+
+        if (avatar) {
+          avatar.translateX(coords.posX);
+          avatar.translateY(coords.posY);
+          avatar.translateZ(coords.posZ);
+          // avatar.rotateX(coords.rotX);
+          // avatar.rotateY(coords.rotY);
+          // avatar.rotateZ(coords.rotZ);
+          avatar.update();
         }
       }
     });
