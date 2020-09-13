@@ -7,7 +7,7 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
   @impl true
   def mount(_params, _session, socket) do
     Organizer.subscribe()
-    public_rooms = for room <- Organizer.list_rooms_by_privacy(false), do: Organizer.room_with_viewers_quantity(room)
+    public_rooms = for room <- Organizer.list_rooms_by_privacy(false), do: {room, Organizer.viewers_quantity(room)}
 
     {:ok,
       socket
@@ -17,18 +17,26 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
   end
 
   @impl true
-  def handle_info({:room_created, rooms}, socket) do
-    {:noreply,
-      socket
-      |> assign(:public_rooms, rooms)
-    }
+  def handle_info({:room_created, room}, socket) do
+    socket =
+      update(
+        socket,
+        :public_rooms,
+        fn public_rooms -> [{room, Organizer.viewers_quantity(room)} | public_rooms] end
+      )
+
+    {:noreply, socket}
   end
 
-  def handle_info({:enter_room, rooms}, socket) do
-    {:noreply,
-      socket
-      |> assign(:public_rooms, rooms)
-    }
+  def handle_info({:enter_room, room}, socket) do
+    socket =
+      update(
+        socket,
+        :public_rooms,
+        fn public_rooms -> [{room, Organizer.viewers_quantity(room)} | public_rooms] end
+      )
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -55,8 +63,9 @@ defmodule ArenaLiveviewWeb.Room.NewLive do
     end
   end
 
-  def handle_event("enter-room", _, socket) do
-    Organizer.broadcast_enter_room()
+  def handle_event("reload-assistants", %{"slug" => slug}, socket) do
+    room = Organizer.get_room(slug)
+    Organizer.broadcast(:enter_room, room)
     {:noreply, socket}
   end
 

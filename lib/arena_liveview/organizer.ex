@@ -80,10 +80,16 @@ defmodule ArenaLiveview.Organizer do
 
   """
   def create_room(attrs \\ %{}) do
-    %Room{}
+    response = %Room{}
     |> Room.changeset(attrs)
     |> Repo.insert()
-    |> broadcast_create_room()
+
+    case response do
+      {:ok, room} ->
+        broadcast(:room_created, room)
+        response
+      error -> error
+    end
   end
 
   @doc """
@@ -133,27 +139,12 @@ defmodule ArenaLiveview.Organizer do
     Room.changeset(room, attrs)
   end
 
-  def room_with_viewers_quantity(room) do
-    viewer_quantity = list_present(room.slug) |> length()
-    %{
-      title: room.title,
-      private: room.private,
-      slug: room.slug,
-      viewer_quantity: viewer_quantity
-    }
+  def viewers_quantity(room) do
+    list_present(room.slug) |> length()
   end
 
-  def broadcast_create_room({:ok, _room} = response) do
-    rooms = for room <- list_rooms_by_privacy(false), do: room_with_viewers_quantity(room)
-    Phoenix.PubSub.broadcast(ArenaLiveview.PubSub, "rooms", {:room_created, rooms: rooms})
-    response
-  end
-
-  def broadcast_create_room(error), do: error
-
-  def broadcast_enter_room() do
-    rooms = for room <- list_rooms_by_privacy(false), do: room_with_viewers_quantity(room)
-    Phoenix.PubSub.broadcast(ArenaLiveview.PubSub, "rooms", {:enter_room, rooms: rooms})
+  def broadcast(event, room) do
+    Phoenix.PubSub.broadcast(ArenaLiveview.PubSub, "rooms", {event, room: room})
   end
 
 end

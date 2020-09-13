@@ -17,9 +17,9 @@
 <div>
     <h3> Room list: </h3>
     <ul>
-    <%= for room <- @public_rooms do %>
-        <li>
-            <%= live_redirect room.title, to: Routes.show_path(@socket, :show, room.slug) %> (<%= room.viewer_quantity %>)
+    <%= for {room, viewers_quantity} <- @public_rooms do %>
+        <li phx-click="reload-assistants" phx-value-slug="<%= room.slug %>">
+            <%= live_redirect room.title, to: Routes.show_path(@socket, :show, room.slug) %> (<%= viewers_quantity %>)
         </li>
     <% end %>
     </ul>
